@@ -25,9 +25,7 @@ class BeneficiaryListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              _showAddBeneficiaryForm(context);
-            },
+            onPressed: () => _showAddBeneficiaryForm(context),
           ),
         ],
       ),

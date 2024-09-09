@@ -5,6 +5,10 @@ class BeneficiaryController extends GetxController {
   var fullname = ''.obs;
   var nickname = ''.obs;
   var phoneNumber = ''.obs;
+  var isVerified = false.obs;
+  var monthlyTopUp = 0.0.obs;
+  var userBalance = 5000.0.obs;
+
   var beneficiaries = <Beneficiary>[].obs;
 
   void addBeneficiary(Beneficiary beneficiary) {
@@ -33,9 +37,26 @@ class BeneficiaryController extends GetxController {
     }
   }
 
+  void saveNickname(String? value) {
+    if (value != null) {
+      nickname.value = value;
+    }
+  }
+
   void savePhoneNumber(String? value) {
     if (value != null) {
       phoneNumber.value = value;
     }
+  }
+
+  bool requestTopUp(Beneficiary beneficiary, double amount) {
+    double maxTopUp = isVerified.value ? 500 : 1000;
+    if (beneficiary.monthlyTopUp + amount > maxTopUp ||
+        userBalance.value < amount + 1) {
+      return false;
+    }
+    userBalance.value -= (amount + 1);
+    beneficiary.monthlyTopUp += amount;
+    return true;
   }
 }

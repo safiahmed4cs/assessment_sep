@@ -9,6 +9,7 @@ void main() {
       fullname: 'John Smith',
       nickname: 'John',
       phoneNumber: '0501234567',
+      isVerified: true,
     );
     controller.addBeneficiary(beneficiary);
     expect(controller.beneficiaries.length, 1);
@@ -20,6 +21,7 @@ void main() {
       fullname: 'John Duke',
       nickname: 'Duke',
       phoneNumber: '0501236546',
+      isVerified: true,
     );
     controller.addBeneficiary(beneficiary);
     controller.removeBeneficiary(beneficiary);

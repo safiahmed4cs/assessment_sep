@@ -53,6 +53,24 @@ class BeneficiaryDetails extends StatelessWidget {
               child: const Text('Delete'),
             ),
           ),
+          const SizedBox(height: 8),
+          if (!beneficiary.isVerified)
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 260),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 27, 124, 30),
+                ),
+                onPressed: () async {
+                  await beneficiaryService.verifyBeneficiary(
+                    context,
+                    beneficiary,
+                  );
+                },
+                child: const Text('Verify'),
+              ),
+            ),
         ],
       ),
     );

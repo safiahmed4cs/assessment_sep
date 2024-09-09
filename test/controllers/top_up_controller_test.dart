@@ -9,6 +9,7 @@ void main() {
       fullname: 'John Smith',
       nickname: 'John',
       phoneNumber: '0501234567',
+      isVerified: true,
     );
     final result = controller.topUp(beneficiary, 100);
     expect(result, true);
@@ -22,6 +23,7 @@ void main() {
       fullname: 'John Duke',
       nickname: 'Duke',
       phoneNumber: '0543467234',
+      isVerified: true,
     );
     final result = controller.topUp(beneficiary, 1100);
     expect(result, false);

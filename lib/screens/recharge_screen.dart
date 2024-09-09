@@ -27,7 +27,7 @@ class RechargeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final beneficiary = beneficiaryService.beneficiaries[index];
           return Container(
-            width: MediaQuery.of(context).size.width * 0.4,
+            width: MediaQuery.of(context).size.width * 0.42,
             margin: EdgeInsets.only(
               left: index == 0 ? 8 : 4,
               right: index == totalCount - 1 ? 8 : 4,
@@ -50,25 +50,35 @@ class RechargeScreen extends StatelessWidget {
                             child: Text(
                               beneficiary.nickname,
                               style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 13,
                                 fontWeight: FontWeight.bold,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(
-                              Icons.delete_forever_outlined,
-                              color: Colors.red,
+                          if (beneficiary.isVerified)
+                            const Padding(
+                              padding: EdgeInsets.all(13.0),
+                              child: Icon(
+                                Icons.verified,
+                                color: Colors.blue,
+                                size: 20,
+                              ),
                             ),
-                            onPressed: () {
-                              beneficiaryService.deleteBeneficiary(
-                                context,
-                                beneficiary,
-                              );
-                            },
-                          ),
+                          if (!beneficiary.isVerified)
+                            IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
+                                Icons.delete_forever_outlined,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                beneficiaryService.deleteBeneficiary(
+                                  context,
+                                  beneficiary,
+                                );
+                              },
+                            ),
                         ],
                       ),
                       const SizedBox(height: 8),

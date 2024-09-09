@@ -13,12 +13,13 @@ class BeneficiaryService extends GetxService {
     beneficiaries.clear();
     for (final beneficiary in beneficiaryList) {
       final parts = beneficiary.split(',');
-      if (parts.length == 3) {
+      if (parts.length == 4) {
         beneficiaries.add(
           Beneficiary(
             fullname: parts[0],
             nickname: parts[1],
             phoneNumber: parts[2],
+            isVerified: parts[3] == 'true',
           ),
         );
       }
@@ -44,12 +45,15 @@ class BeneficiaryService extends GetxService {
       fullname: fullname,
       nickname: nickname,
       phoneNumber: phoneNumber,
+      isVerified: false,
     );
     beneficiaries.add(newBeneficiary);
 
     final prefs = await SharedPreferences.getInstance();
     final beneficiaryList = beneficiaries
-        .map((b) => '${b.fullname},${b.nickname},${b.phoneNumber}')
+        .map(
+          (b) => '${b.fullname},${b.nickname},${b.phoneNumber},${b.isVerified}',
+        )
         .toList();
     await prefs.setStringList('beneficiaries', beneficiaryList);
 
@@ -111,5 +115,44 @@ class BeneficiaryService extends GetxService {
       );
       Navigator.of(context).pop();
     }
+  }
+
+  Future<void> verifyBeneficiary(
+    BuildContext context,
+    Beneficiary beneficiary,
+  ) async {
+    final index = beneficiaries.indexWhere(
+      (b) => b.phoneNumber == beneficiary.phoneNumber,
+    );
+    if (index == -1) {
+      return;
+    }
+    beneficiaries[index].isVerified = true;
+
+    Beneficiary verifiedBeneficiary = beneficiaries[index];
+    verifiedBeneficiary.isVerified = false;
+    beneficiaries.removeAt(index);
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      verifiedBeneficiary.isVerified = true;
+      verifiedBeneficiary.monthlyTopUp = 500;
+      beneficiaries.insert(0, verifiedBeneficiary);
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final beneficiaryList = beneficiaries
+        .map(
+          (b) => '${b.fullname},${b.nickname},${b.phoneNumber},${b.isVerified}',
+        )
+        .toList();
+    await prefs.setStringList('beneficiaries', beneficiaryList);
+
+    Get.snackbar(
+      'Success',
+      'Beneficiary verified successfully.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+    );
+    Navigator.of(context).pop();
   }
 }

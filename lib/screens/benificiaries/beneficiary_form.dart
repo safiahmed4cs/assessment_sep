@@ -57,7 +57,7 @@ class BeneficiaryForm extends StatelessWidget {
               }
               return null;
             },
-            onSaved: beneficiaryController.nickname,
+            onSaved: beneficiaryController.saveNickname,
             inputFormatters: [
               LengthLimitingTextInputFormatter(20),
               CapitalizeWordsInputFormatter(),
