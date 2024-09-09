@@ -21,6 +21,26 @@ class BeneficiaryController extends GetxController {
     beneficiaries.remove(beneficiary);
   }
 
+  String? validateFullname(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a fullname';
+    }
+    if (value.length > 100) {
+      return 'Fullname cannot be more than 100 characters';
+    }
+    return null;
+  }
+
+  String? validateNickname(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a nickname';
+    }
+    if (value.length > 20) {
+      return 'Nickname cannot be more than 20 characters';
+    }
+    return null;
+  }
+
   String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a mobile number';

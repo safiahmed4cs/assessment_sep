@@ -30,15 +30,7 @@ class BeneficiaryForm extends StatelessWidget {
           TextFormField(
             decoration: const InputDecoration(labelText: 'Full Name'),
             autocorrect: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a full name';
-              }
-              if (value.length > 100) {
-                return 'Name cannot be more than 100 characters';
-              }
-              return null;
-            },
+            validator: beneficiaryController.validateFullname,
             onSaved: beneficiaryController.saveFullName,
             inputFormatters: [
               LengthLimitingTextInputFormatter(100),
@@ -48,15 +40,7 @@ class BeneficiaryForm extends StatelessWidget {
           TextFormField(
             decoration: const InputDecoration(labelText: 'Nickname'),
             autocorrect: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a nickname';
-              }
-              if (value.length > 100) {
-                return 'Nickname cannot be more than 20 characters';
-              }
-              return null;
-            },
+            validator: beneficiaryController.validateNickname,
             onSaved: beneficiaryController.saveNickname,
             inputFormatters: [
               LengthLimitingTextInputFormatter(20),
