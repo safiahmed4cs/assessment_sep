@@ -18,16 +18,18 @@ class TopUpScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: topUpController.topUpOptions.length,
         itemBuilder: (context, index) {
-          final option = topUpController.topUpOptions[index];
+          final amount = topUpController.topUpOptions[index];
           return ListTile(
-            title: Text('AED ${option.amount}'),
+            title: Text('AED $amount'),
             onTap: () {
-              if (topUpController.topUp(beneficiary, option.amount)) {
+              if (topUpController.topUp(beneficiary, amount)) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Top Up Successful')));
+                  const SnackBar(content: Text('Top Up Successful')),
+                );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Top Up Failed')));
+                  const SnackBar(content: Text('Top Up Failed')),
+                );
               }
             },
           );
