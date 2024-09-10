@@ -81,6 +81,10 @@ class RechargeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          minimumSize: const Size(double.infinity, 30),
+                        ),
                         onPressed: () {
                           Navigator.pushNamed(context, '/topup',
                               arguments: beneficiary);
