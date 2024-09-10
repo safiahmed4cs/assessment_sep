@@ -14,7 +14,7 @@ class HistoryScreen extends StatelessWidget {
       if (totalCount == 0) {
         return const Center(
           child: Text(
-            'No beneficiaries found. Please add a beneficiary.',
+            'No history found.',
             style: TextStyle(fontSize: 14),
           ),
         );
