@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
-import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/beneficiary.dart';
 import 'package:assessment_sep_2024/models/top_up_option.dart';
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +135,7 @@ class TopUpController extends GetxController {
 
     final newRecord = jsonEncode({
       'userId': user.userId,
-      'beneficiaryId': beneficiary.benificiaryId,
+      'beneficiaryId': beneficiary.beneficiaryId,
       'amount': amount,
       'timestamp': DateTime.now().toIso8601String(),
     });

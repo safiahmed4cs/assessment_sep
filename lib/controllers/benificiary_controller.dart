@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
-import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/beneficiary.dart';
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -134,7 +134,7 @@ class BeneficiaryController extends GetxController {
       fullname: fullname,
       nickname: nickname,
       phoneNumber: phoneNumber,
-      benificiaryId: DateTime.now().toString(),
+      beneficiaryId: DateTime.now().toString(),
     );
     beneficiaries.add(newBeneficiary);
     allBenificiaries.add(newBeneficiary);
@@ -169,9 +169,9 @@ class BeneficiaryController extends GetxController {
 
   Future<void> deleteBeneficiary(
     BuildContext context,
-    Beneficiary beneficiary,
+    String beneficiaryId,
   ) async {
-    final shouldDelete = await showDialog<bool>(
+    await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -187,7 +187,7 @@ class BeneficiaryController extends GetxController {
             ),
             TextButton(
               onPressed: () {
-                // Navigator.of(context).pop(true);
+                _deleteHandler(context, beneficiaryId);
               },
               child: const Text(
                 'Yes',
@@ -200,23 +200,26 @@ class BeneficiaryController extends GetxController {
         );
       },
     );
+  }
 
-    if (shouldDelete == true) {
-      allBenificiaries.remove(beneficiary);
+  void _deleteHandler(context, String beneficiaryId) async {
+    allBenificiaries.removeWhere(
+        (beneficiary) => beneficiary.beneficiaryId == beneficiaryId);
 
-      final prefs = await SharedPreferences.getInstance();
-      final beneficiaryListJson = allBenificiaries
-          .map((beneficiary) => jsonEncode(beneficiary.toJson()))
-          .toList();
-      await prefs.setStringList('beneficiary_list', beneficiaryListJson);
+    final prefs = await SharedPreferences.getInstance();
+    final beneficiaryListJson = allBenificiaries
+        .map((beneficiary) => jsonEncode(beneficiary.toJson()))
+        .toList();
+    await prefs.setStringList('beneficiary_list', beneficiaryListJson);
 
-      Get.snackbar(
-        'Success',
-        'Beneficiary deleted successfully.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-      );
-      Navigator.of(context).pop();
-    }
+    Get.snackbar(
+      'Success',
+      'Beneficiary deleted successfully.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+    );
+    Navigator.of(context).pop();
+
+    loadBeneficiaries();
   }
 }

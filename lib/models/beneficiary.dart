@@ -1,5 +1,5 @@
 class Beneficiary {
-  String benificiaryId;
+  String beneficiaryId;
   String userId;
   String fullname;
   String nickname;
@@ -7,7 +7,7 @@ class Beneficiary {
   double monthlyTopUpAmount;
 
   Beneficiary({
-    required this.benificiaryId,
+    required this.beneficiaryId,
     required this.userId,
     required this.fullname,
     required this.nickname,
@@ -16,7 +16,7 @@ class Beneficiary {
   });
 
   Map<String, dynamic> toJson() => {
-        'benificiaryId': benificiaryId,
+        'beneficiaryId': beneficiaryId,
         'userId': userId,
         'fullname': fullname,
         'nickname': nickname,
@@ -27,7 +27,7 @@ class Beneficiary {
   factory Beneficiary.fromJson(Map<String, dynamic> json) {
     return Beneficiary(
       userId: json['userId'],
-      benificiaryId: json['benificiaryId'],
+      beneficiaryId: json['beneficiaryId'],
       fullname: json['fullname'],
       nickname: json['nickname'],
       phoneNumber: json['phoneNumber'],
