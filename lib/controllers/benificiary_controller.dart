@@ -26,6 +26,7 @@ class BeneficiaryController extends GetxController {
     super.onInit();
   }
 
+  // Validate the fullname input
   String? validateFullname(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a fullname';
@@ -36,6 +37,7 @@ class BeneficiaryController extends GetxController {
     return null;
   }
 
+  // Validate the nickname input
   String? validateNickname(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a nickname';
@@ -46,6 +48,7 @@ class BeneficiaryController extends GetxController {
     return null;
   }
 
+  // Validate the phone number input
   String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a mobile number';
@@ -56,33 +59,25 @@ class BeneficiaryController extends GetxController {
     return null;
   }
 
+  // save the fullname input
   void saveFullName(String? value) {
     if (value != null) {
       fullname.value = value;
     }
   }
 
+  // save the nickname input
   void saveNickname(String? value) {
     if (value != null) {
       nickname.value = value;
     }
   }
 
+  // save the phone number input
   void savePhoneNumber(String? value) {
     if (value != null) {
       phoneNumber.value = value;
     }
-  }
-
-  bool requestTopUp(Beneficiary beneficiary, double amount) {
-    double maxTopUp = isVerified.value ? 500 : 1000;
-    if (beneficiary.monthlyTopUpAmount + amount > maxTopUp ||
-        userBalance.value < amount + 1) {
-      return false;
-    }
-    userBalance.value -= (amount + 1);
-    beneficiary.monthlyTopUpAmount += amount;
-    return true;
   }
 
   //Load benificiaries from shared preferences and add to the list where user id is currentuser userid
@@ -104,6 +99,7 @@ class BeneficiaryController extends GetxController {
     }
   }
 
+  // Add a new beneficiary
   Future<void> addBeneficiary({
     required String fullname,
     required String nickname,
@@ -167,6 +163,7 @@ class BeneficiaryController extends GetxController {
         .toList();
   }
 
+  // Remove a beneficiary
   Future<void> deleteBeneficiary(
     BuildContext context,
     String beneficiaryId,
