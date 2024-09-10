@@ -92,7 +92,7 @@ class TopUpController extends GetxController {
     }
 
     // Check if the user has enough balance including the charge
-    final int totalAmount = amount + charge;
+    // final int totalAmount = amount + charge;
     if (remainingBalance < amount) {
       Get.snackbar('Error', 'Insufficient balance');
       return false;
