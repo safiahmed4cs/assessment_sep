@@ -1,3 +1,4 @@
+import 'package:assessment_sep_2024/bindings/app_bindings.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/beneficiary_list_screen.dart';
 import 'package:assessment_sep_2024/screens/home_screen.dart';
 import 'package:assessment_sep_2024/screens/top_up_screens/top_up_screen.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'E Assessment App',
+      initialBinding: AppBindings(),
       theme: AppTheme.theme,
       debugShowCheckedModeBanner: false,
       initialRoute: '/',

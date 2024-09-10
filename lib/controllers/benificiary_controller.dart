@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BeneficiaryController extends GetxController {
   //Import BenificiaryService
-  final RxList<Beneficiary> beneficiariesSession = <Beneficiary>[].obs;
+  final RxList<Beneficiary> allBenificiaries = <Beneficiary>[].obs;
   final RxList<Beneficiary> beneficiaries = <Beneficiary>[].obs;
   final UserController userController = Get.find<UserController>();
 
@@ -85,33 +85,13 @@ class BeneficiaryController extends GetxController {
 
   //Load benificiaries from shared preferences and add to the list where user id is currentuser userid
   Future<void> loadBeneficiaries() async {
-    final prefs = await SharedPreferences.getInstance();
-    final beneficiaryList = prefs.getStringList('beneficiaries') ?? [];
     final currentUserId = userController.currentUser.value?.userId;
 
     beneficiaries.clear();
-    beneficiariesSession.clear();
-    for (final beneficiary in beneficiaryList) {
-      final parts = beneficiary.split(',');
-      // this is to have complete list of benificiaries
-      beneficiariesSession.add(
-        Beneficiary(
-          userId: parts[0],
-          fullname: parts[1],
-          nickname: parts[2],
-          phoneNumber: parts[3],
-        ),
-      );
+    for (final beneficiary in allBenificiaries) {
       // this is to have list of benificiaries where user id is current user id
-      if (parts.length == 4 && parts[0] == currentUserId) {
-        beneficiaries.add(
-          Beneficiary(
-            userId: parts[0],
-            fullname: parts[1],
-            nickname: parts[2],
-            phoneNumber: parts[3],
-          ),
-        );
+      if (beneficiary.userId == currentUserId) {
+        beneficiaries.add(beneficiary);
       }
     }
   }
@@ -148,14 +128,7 @@ class BeneficiaryController extends GetxController {
       phoneNumber: phoneNumber,
     );
     beneficiaries.add(newBeneficiary);
-
-    final prefs = await SharedPreferences.getInstance();
-    final beneficiaryList = beneficiariesSession
-        .map(
-          (b) => '${b.userId},${b.fullname},${b.nickname},${b.phoneNumber}',
-        )
-        .toList();
-    await prefs.setStringList('beneficiaries', beneficiaryList);
+    allBenificiaries.add(newBeneficiary);
 
     Get.snackbar(
       'Success',

@@ -10,9 +10,9 @@ import 'package:assessment_sep_2024/widgets/segment_button.dart';
 
 class BeneficiaryListScreen extends StatelessWidget {
   final SegmentController segmentController = Get.put(SegmentController());
-  final BeneficiaryController beneficiaryController =
-      Get.put(BeneficiaryController());
   final UserController userController = Get.find<UserController>();
+  final BeneficiaryController beneficiaryController =
+      Get.find<BeneficiaryController>();
 
   BeneficiaryListScreen({super.key});
 

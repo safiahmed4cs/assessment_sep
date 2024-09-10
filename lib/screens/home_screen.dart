@@ -1,3 +1,4 @@
+import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,10 @@ import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-  final UserController userController = Get.put(UserController());
+
+  final UserController userController = Get.find<UserController>();
+  final BeneficiaryController beneficiaryController =
+      Get.find<BeneficiaryController>();
 
   @override
   Widget build(BuildContext context) {
