@@ -8,16 +8,32 @@ import 'dart:convert';
 class UserController extends GetxController {
   var currentUser = Rxn<User>();
 
+  @override
+  void onInit() {
+    super.onInit();
+    _checkCurrentUser();
+  }
+
+  Future<void> _checkCurrentUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('current_user');
+    if (userJson != null) {
+      currentUser.value = User.fromJson(jsonDecode(userJson));
+      Get.offAll(() => BeneficiaryListScreen());
+    }
+  }
+
   Future<void> saveUser(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('current_user', jsonEncode(user.toJson()));
     currentUser.value = user;
-
-    //Navigate to BeneficiaryListScreen
     Get.offAll(() => BeneficiaryListScreen());
   }
 
   void logout() async {
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await prefs.remove('current_user');
+    // currentUser.value = null;
     Get.offAll(() => HomeScreen());
   }
 

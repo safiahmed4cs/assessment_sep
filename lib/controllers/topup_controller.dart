@@ -1,10 +1,15 @@
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/top_up_option.dart';
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// controllers/topup_controller.dart
 class TopUpController extends GetxController {
+  var beneficiaries = <Beneficiary>[].obs;
+  final UserController userController = Get.find<UserController>();
+
   final topUpOptions = [5, 10, 20, 30, 50, 75, 100];
 
   final RxInt selectedAmount = 0.obs;
@@ -18,6 +23,56 @@ class TopUpController extends GetxController {
   }
 
   int get totalAmount => selectedAmount.value + charge;
+
+  User? get user => userController.currentUser.value;
+
+  @override
+  void onInit() {
+    super.onInit();
+    selectedAmount.value = 0;
+    amountController.clear();
+  }
+
+  bool canTopUpBeneficiary(double amount, Beneficiary beneficiary) {
+    if (user == null) {
+      return false;
+    }
+    return beneficiary.canTopUp(amount, user!.isVerified);
+  }
+
+  bool canUserTopUp(double amount) {
+    if (user == null) {
+      return false;
+    }
+    return user!.canTopUp(amount);
+  }
+
+  void topUpBeneficiary(Beneficiary beneficiary, double amount) {
+    if (user == null) {
+      Get.snackbar("Error", "User not found.");
+      return;
+    }
+    if (canTopUpBeneficiary(amount, beneficiary) && canUserTopUp(amount)) {
+      // Deduct the amount + transaction fee from user's balance
+      userController.currentUser.update((u) {
+        u!.balance -= (amount + 1); // AED 1 transaction fee
+        u.totalMonthlyTopUp += amount;
+      });
+
+      // Update beneficiary's top-up amount
+      beneficiary.monthlyTopUpAmount += amount;
+
+      Get.snackbar("Success",
+          "Top-up of AED $amount successful for ${beneficiary.nickname}");
+    } else {
+      Get.snackbar(
+          "Error", "Top-up failed due to limits or balance constraints.");
+    }
+  }
+
+  List<TopUpOption> getTopUpOptions() {
+    return getTopUpOptions();
+  }
 
   bool topUp(Beneficiary beneficiary, int amount) {
     // Deduct the amount from the wallet balance

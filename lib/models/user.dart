@@ -34,4 +34,8 @@ class User {
       totalMonthlyTopUp: json['totalMonthlyTopUp'],
     );
   }
+
+  bool canTopUp(double amount) {
+    return (totalMonthlyTopUp + amount) <= 3000 && balance >= amount + 1;
+  }
 }

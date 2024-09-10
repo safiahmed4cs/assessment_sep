@@ -1,7 +1,6 @@
 import 'package:assessment_sep_2024/controllers/topup_controller.dart';
 import 'package:assessment_sep_2024/models/benificiary.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class TopUpScreen extends StatelessWidget {
@@ -13,6 +12,7 @@ class TopUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final beneficiary =
         ModalRoute.of(context)!.settings.arguments as Beneficiary;
+    topUpController.selectedAmount.value = 0;
 
     return Scaffold(
       appBar: AppBar(title: Text('Top Up ${beneficiary.fullname}')),
@@ -60,27 +60,33 @@ class TopUpScreen extends StatelessWidget {
                 }).toList(),
               ),
               const SizedBox(height: 16),
-              Column(
-                children: [
-                  _richText(
-                    label: 'Selected Amount:',
-                    value: 'AED ${topUpController.selectedAmount}',
-                  ),
-                  _richText(
-                    label: 'Charge:',
-                    value: 'AED ${topUpController.charge}',
-                  ),
-                  const SizedBox(height: 8),
-                  const Divider(
-                    height: 2,
-                  ),
-                  const SizedBox(height: 8),
-                  _richText(
-                    label: 'Subtotal:',
-                    value: 'AED ${topUpController.totalAmount}',
-                  ),
-                ],
-              ),
+              if (topUpController.selectedAmount.value > 0) ...[
+                const Divider(height: 2),
+                const SizedBox(height: 16),
+              ],
+              if (topUpController.selectedAmount.value > 0) ...[
+                Column(
+                  children: [
+                    _richText(
+                      label: 'Selected Amount:',
+                      value: 'AED ${topUpController.selectedAmount}',
+                    ),
+                    _richText(
+                      label: 'Charge:',
+                      value: 'AED ${topUpController.charge}',
+                    ),
+                    const SizedBox(height: 8),
+                    const Divider(
+                      height: 2,
+                    ),
+                    const SizedBox(height: 8),
+                    _richText(
+                      label: 'Subtotal:',
+                      value: 'AED ${topUpController.totalAmount}',
+                    ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
