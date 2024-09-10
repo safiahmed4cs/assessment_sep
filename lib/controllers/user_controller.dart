@@ -28,13 +28,13 @@ class UserController extends GetxController {
     }
   }
 
-  Future<User> getCurrentUser(User user) async {
+  Future<User?> getCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userJson = prefs.getString('current_user');
     if (userJson != null) {
       return User.fromJson(jsonDecode(userJson));
     }
-    return user;
+    return null;
   }
 
   Future<void> saveUser(User user) async {
@@ -45,9 +45,9 @@ class UserController extends GetxController {
   }
 
   void logout() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.remove('current_user');
-    // currentUser.value = null;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('current_user');
+    currentUser.value = null;
     Get.offAll(() => HomeScreen());
   }
 

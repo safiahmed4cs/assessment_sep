@@ -15,7 +15,7 @@ class BeneficiaryListScreen extends StatelessWidget {
   final BeneficiaryController beneficiaryController =
       Get.find<BeneficiaryController>();
 
-  User get user => userController.currentUser.value!;
+  User? get user => userController.currentUser.value;
   String get month => DateTime.now().month.toString();
 
   BeneficiaryListScreen({super.key});
@@ -49,7 +49,7 @@ class BeneficiaryListScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Welcome, ${user.fullName}',
+                        'Welcome, ${user?.fullName}',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -105,7 +105,8 @@ class BeneficiaryListScreen extends StatelessWidget {
 
   Widget _buildUserBalanceSection() {
     return Obx(() {
-      final user = userController.currentUser.value!;
+      User? user = userController.currentUser.value;
+      if (user == null) return const SizedBox.shrink();
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(

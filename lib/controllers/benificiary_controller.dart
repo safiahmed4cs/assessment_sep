@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/models/benificiary.dart';
 import 'package:assessment_sep_2024/models/user.dart';
@@ -85,9 +87,15 @@ class BeneficiaryController extends GetxController {
 
   //Load benificiaries from shared preferences and add to the list where user id is currentuser userid
   Future<void> loadBeneficiaries() async {
-    final currentUserId = userController.currentUser.value?.userId;
+    User? currentUser = await userController.getCurrentUser();
+    if (currentUser == null) {
+      return;
+    }
+    final currentUserId = currentUser.userId;
 
     beneficiaries.clear();
+    allBenificiaries.clear();
+    await _loadBeneficiaryList();
     for (final beneficiary in allBenificiaries) {
       // this is to have list of benificiaries where user id is current user id
       if (beneficiary.userId == currentUserId) {
@@ -137,6 +145,26 @@ class BeneficiaryController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.green,
     );
+
+    saveBeneficiaryList();
+  }
+
+  // Method to save beneficiary list to SharedPreferences
+  Future<void> saveBeneficiaryList() async {
+    final prefs = await SharedPreferences.getInstance();
+    final beneficiaryListJson = beneficiaries
+        .map((beneficiary) => jsonEncode(beneficiary.toJson()))
+        .toList();
+    await prefs.setStringList('beneficiary_list', beneficiaryListJson);
+  }
+
+  // Method to load beneficiary list from SharedPreferences
+  Future<void> _loadBeneficiaryList() async {
+    final prefs = await SharedPreferences.getInstance();
+    final beneficiaryListJson = prefs.getStringList('beneficiary_list') ?? [];
+    allBenificiaries.value = beneficiaryListJson
+        .map((beneficiary) => Beneficiary.fromJson(jsonDecode(beneficiary)))
+        .toList();
   }
 
   Future<void> deleteBeneficiary(
@@ -174,12 +202,13 @@ class BeneficiaryController extends GetxController {
     );
 
     if (shouldDelete == true) {
-      beneficiaries.remove(beneficiary);
+      allBenificiaries.remove(beneficiary);
 
       final prefs = await SharedPreferences.getInstance();
-      final beneficiaryList =
-          beneficiaries.map((b) => '${b.fullname},${b.phoneNumber}').toList();
-      await prefs.setStringList('beneficiaries', beneficiaryList);
+      final beneficiaryListJson = allBenificiaries
+          .map((beneficiary) => jsonEncode(beneficiary.toJson()))
+          .toList();
+      await prefs.setStringList('beneficiary_list', beneficiaryListJson);
 
       Get.snackbar(
         'Success',
