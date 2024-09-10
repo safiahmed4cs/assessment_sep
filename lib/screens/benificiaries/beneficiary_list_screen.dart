@@ -81,23 +81,21 @@ class BeneficiaryListScreen extends StatelessWidget {
             ),
           ),
           // Segment Screens
-          SizedBox(
-            height: 200,
-            child: Obx(() {
-              return segmentController.selectedSegment.value == 0
-                  ? RechargeScreen(beneficiaryController: beneficiaryController)
-                  : const HistoryScreen();
-            }),
-          ),
-          // Beneficiary List
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height - 200,
-              ),
-            ),
-          ),
+          Obx(() {
+            if (segmentController.selectedSegment.value == 0) {
+              return SizedBox(
+                height: 200,
+                child: RechargeScreen(
+                  beneficiaryController: beneficiaryController,
+                ),
+              );
+            } else {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height - 250,
+                child: HistoryScreen(),
+              );
+            }
+          }),
         ],
       ),
     );

@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({super.key});
+  HistoryScreen({super.key});
 
   TopUpController get topUpController => Get.find<TopUpController>();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      int totalCount = topUpController.beneficiaries.length;
+      int totalCount = topUpController.allHistory.length;
       if (totalCount == 0) {
         return const Center(
           child: Text(
@@ -19,10 +20,19 @@ class HistoryScreen extends StatelessWidget {
           ),
         );
       }
+
+      // Set the initial scroll position to the end of the list
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
+
       return ListView.builder(
+        controller: _scrollController,
+        shrinkWrap: true,
+        reverse: true,
         itemCount: totalCount,
         itemBuilder: (context, index) {
-          final beneficiary = topUpController.beneficiaries[index];
+          final history = topUpController.allHistory[index];
           return Container(
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.only(
@@ -43,7 +53,7 @@ class HistoryScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            beneficiary.nickname,
+                            history.nickname,
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
@@ -51,28 +61,28 @@ class HistoryScreen extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        Text(
+                          'AED ${history.amount}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      beneficiary.fullname,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      beneficiary.phoneNumber,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          history.fullName,
+                        ),
+                        Text(
+                          history.phoneNumber,
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        minimumSize: const Size(double.infinity, 30),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/topup',
-                            arguments: beneficiary);
-                      },
-                      child: const Text('Recharge Now'),
-                    ),
                   ],
                 ),
               ),
