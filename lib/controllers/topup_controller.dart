@@ -43,6 +43,7 @@ class TopUpController extends GetxController {
     loadTopupHistory();
   }
 
+  // this is to check if the user can top up the beneficiary
   bool canTopUpBeneficiary(double amount, Beneficiary beneficiary) {
     if (user == null) {
       return false;
@@ -50,10 +51,12 @@ class TopUpController extends GetxController {
     return beneficiary.canTopUp(amount, user!.isVerified);
   }
 
+  // this is to get the top up options
   List<TopUpOption> getTopUpOptions() {
     return getTopUpOptions();
   }
 
+  // this is to top up the beneficiary
   Future<bool> topUp(Beneficiary beneficiary, int amount) async {
     User? user = await userController.getCurrentUser();
     if (user == null) {
