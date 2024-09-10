@@ -28,6 +28,15 @@ class UserController extends GetxController {
     }
   }
 
+  Future<User> getCurrentUser(User user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('current_user');
+    if (userJson != null) {
+      return User.fromJson(jsonDecode(userJson));
+    }
+    return user;
+  }
+
   Future<void> saveUser(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('current_user', jsonEncode(user.toJson()));

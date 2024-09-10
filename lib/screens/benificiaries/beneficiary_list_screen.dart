@@ -45,14 +45,11 @@ class BeneficiaryListScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Obx(() {
-                  final user = userController.currentUser.value;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user != null
-                            ? 'Welcome, ${user.fullName}'
-                            : 'Mobile Recharge',
+                        'Welcome, ${user.fullName}',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
