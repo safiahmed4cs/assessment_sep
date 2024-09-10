@@ -42,14 +42,20 @@ class BeneficiaryListScreen extends StatelessWidget {
               children: [
                 Obx(() {
                   final user = userController.currentUser.value;
-                  return Text(
-                    user != null
-                        ? 'Welcome, ${user.fullName}'
-                        : 'Mobile Recharge',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user != null
+                            ? 'Welcome, ${user.fullName}'
+                            : 'Mobile Recharge',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      _buildUserBalanceSection(),
+                    ],
                   );
                 }),
 
@@ -88,12 +94,6 @@ class BeneficiaryListScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
                 height: MediaQuery.of(context).size.height - 200,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildUserBalanceSection(),
-                  ],
-                ),
               ),
             ),
           ),
@@ -103,15 +103,12 @@ class BeneficiaryListScreen extends StatelessWidget {
   }
 
   Widget _buildUserBalanceSection() {
-    return Obx(() {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          'User Balance: AED ${userController.currentUser.value?.balance ?? 0}',
-          style: const TextStyle(fontSize: 18),
-        ),
-      );
-    });
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        'User Balance: AED ${userController.currentUser.value?.balance ?? 0}',
+      ),
+    );
   }
 
   void _showAddBeneficiaryForm(BuildContext context) {

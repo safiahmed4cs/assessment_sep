@@ -76,11 +76,12 @@ class TopUpController extends GetxController {
 
   bool topUp(Beneficiary beneficiary, int amount) {
     // Deduct the amount from the wallet balance
-    // if (beneficiary.walletBalance >= amount) {
-    //   beneficiary.walletBalance -= amount;
-    //   totalTopUpThisMonth.value += amount;
-    //   return true;
-    // }
+    if (beneficiary.monthlyTopUpAmount >= amount) {
+      beneficiary.monthlyTopUpAmount -= amount;
+      totalTopUpThisMonth.value += amount;
+      return true;
+    }
+    Get.snackbar('Error', 'Insufficient balance');
     return false;
   }
 

@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                     );
                     userController.saveUser(user);
                   },
-                  child: const Text('User Verified'),
+                  child: const Text('Verified User'),
                 ),
               ),
               const SizedBox(
@@ -78,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                     );
                     userController.saveUser(user);
                   },
-                  child: const Text('User Unverified'),
+                  child: const Text('Unverified User'),
                 ),
               ),
             ],
