@@ -3,13 +3,18 @@ class Beneficiary {
   String fullname;
   String nickname;
   String phoneNumber;
-  double monthlyTopUp;
+  double monthlyTopUpAmount;
 
   Beneficiary({
     required this.userId,
     required this.fullname,
     required this.nickname,
     required this.phoneNumber,
-    this.monthlyTopUp = 0.0,
+    this.monthlyTopUpAmount = 0.0,
   });
+
+  bool canTopUp(double amount, bool isVerified) {
+    double maxLimit = isVerified ? 1000 : 500;
+    return (monthlyTopUpAmount + amount) <= maxLimit;
+  }
 }

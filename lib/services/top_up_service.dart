@@ -17,12 +17,12 @@ class TopUpService {
 
   bool topUp(Beneficiary beneficiary, double amount) {
     double maxTopUp = isVerified ? 500 : 1000;
-    if (beneficiary.monthlyTopUp + amount > maxTopUp ||
+    if (beneficiary.monthlyTopUpAmount + amount > maxTopUp ||
         userBalance < amount + 1) {
       return false;
     }
     userBalance -= (amount + 1);
-    beneficiary.monthlyTopUp += amount;
+    beneficiary.monthlyTopUpAmount += amount;
     return true;
   }
 }

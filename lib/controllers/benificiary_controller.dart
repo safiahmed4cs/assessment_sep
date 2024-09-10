@@ -74,12 +74,12 @@ class BeneficiaryController extends GetxController {
 
   bool requestTopUp(Beneficiary beneficiary, double amount) {
     double maxTopUp = isVerified.value ? 500 : 1000;
-    if (beneficiary.monthlyTopUp + amount > maxTopUp ||
+    if (beneficiary.monthlyTopUpAmount + amount > maxTopUp ||
         userBalance.value < amount + 1) {
       return false;
     }
     userBalance.value -= (amount + 1);
-    beneficiary.monthlyTopUp += amount;
+    beneficiary.monthlyTopUpAmount += amount;
     return true;
   }
 

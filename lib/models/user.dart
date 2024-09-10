@@ -3,12 +3,16 @@ class User {
   final String fullName;
   final String mobile;
   final bool isVerified;
+  double balance;
+  double totalMonthlyTopUp;
 
   User({
     required this.userId,
     required this.isVerified,
     required this.fullName,
     required this.mobile,
+    required this.balance,
+    required this.totalMonthlyTopUp,
   });
 
   Map<String, dynamic> toJson() => {
@@ -16,6 +20,8 @@ class User {
         'fullName': fullName,
         'mobile': mobile,
         'isVerified': isVerified,
+        'balance': balance,
+        'totalMonthlyTopUp': totalMonthlyTopUp,
       };
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -24,6 +30,8 @@ class User {
       fullName: json['fullName'],
       mobile: json['mobile'],
       isVerified: json['isVerified'],
+      balance: json['balance'],
+      totalMonthlyTopUp: json['totalMonthlyTopUp'],
     );
   }
 }
