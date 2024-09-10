@@ -152,7 +152,7 @@ class BeneficiaryController extends GetxController {
   // Method to save beneficiary list to SharedPreferences
   Future<void> saveBeneficiaryList() async {
     final prefs = await SharedPreferences.getInstance();
-    final beneficiaryListJson = beneficiaries
+    final beneficiaryListJson = allBenificiaries
         .map((beneficiary) => jsonEncode(beneficiary.toJson()))
         .toList();
     await prefs.setStringList('beneficiary_list', beneficiaryListJson);
