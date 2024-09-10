@@ -18,7 +18,7 @@ class TopUpController extends GetxController {
 
   final historyKey = 'topup_history';
 
-  final topUpOptions = [5, 10, 20, 30, 50, 75, 100, 1000, 4000];
+  final topUpOptions = [5, 10, 20, 30, 50, 75, 100];
 
   final RxInt selectedAmount = 0.obs;
   final int charge = 1;
