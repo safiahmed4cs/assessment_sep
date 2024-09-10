@@ -1,4 +1,6 @@
+import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,11 +8,6 @@ class TopUpController extends GetxController {
   final topUpOptions = [5, 10, 20, 30, 50, 75, 100];
   final totalTopUpThisMonth = 0.obs;
   final amountController = TextEditingController();
-  final isVerified = false.obs;
-
-  void setBeneficiary(Beneficiary beneficiary) {
-    isVerified.value = beneficiary.isVerified;
-  }
 
   bool topUp(Beneficiary beneficiary, int amount) {
     // Deduct the amount from the wallet balance
@@ -29,7 +26,14 @@ class TopUpController extends GetxController {
 
   void onSubmit(Beneficiary beneficiary) {
     final amount = int.tryParse(amountController.text) ?? 0;
-    final maxAmount = isVerified.value ? 500 : 1000;
+
+    bool isVerified = false;
+    User? user = UserController().currentUser.value;
+    if (user != null) {
+      isVerified = user.isVerified;
+    }
+
+    final maxAmount = isVerified ? 500 : 1000;
 
     if (amount <= 0 || amount > maxAmount) {
       Get.snackbar('Error', 'Amount must be between 1 and $maxAmount AED');

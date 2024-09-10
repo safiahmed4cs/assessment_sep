@@ -27,7 +27,7 @@ class RechargeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final beneficiary = beneficiaryService.beneficiaries[index];
           return Container(
-            width: MediaQuery.of(context).size.width * 0.44,
+            width: MediaQuery.of(context).size.width * 0.40,
             margin: EdgeInsets.only(
               left: index == 0 ? 8 : 4,
               right: index == totalCount - 1 ? 8 : 4,
@@ -39,7 +39,7 @@ class RechargeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -56,29 +56,19 @@ class RechargeScreen extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          if (beneficiary.isVerified)
-                            const Padding(
-                              padding: EdgeInsets.all(13.0),
-                              child: Icon(
-                                Icons.verified,
-                                color: Colors.blue,
-                                size: 20,
-                              ),
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(
+                              Icons.delete_forever_outlined,
+                              color: Colors.red,
                             ),
-                          if (!beneficiary.isVerified)
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              icon: const Icon(
-                                Icons.delete_forever_outlined,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {
-                                beneficiaryService.deleteBeneficiary(
-                                  context,
-                                  beneficiary,
-                                );
-                              },
-                            ),
+                            onPressed: () {
+                              beneficiaryService.deleteBeneficiary(
+                                context,
+                                beneficiary,
+                              );
+                            },
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
