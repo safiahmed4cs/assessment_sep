@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // controllers/topup_controller.dart
 class TopUpController extends GetxController {
   var beneficiaries = <Beneficiary>[].obs;
+
   final UserController userController = Get.find<UserController>();
 
   final historyKey = 'topup_history';
@@ -56,31 +57,6 @@ class TopUpController extends GetxController {
       return false;
     }
     return beneficiary.canTopUp(amount, user!.isVerified);
-  }
-
-  void topUpBeneficiary(Beneficiary beneficiary, double amount, String month) {
-    try {
-      if (user == null) {
-        Get.snackbar("Error", "User not found.");
-        return;
-      }
-      user!.canTopUp(amount, month);
-      if (canTopUpBeneficiary(amount, beneficiary)) {
-        // Deduct the amount + transaction fee from user's balance
-        userController.currentUser.update((u) {});
-
-        // Update beneficiary's top-up amount
-        beneficiary.monthlyTopUpAmount += amount;
-
-        Get.snackbar("Success",
-            "Top-up of AED $amount successful for ${beneficiary.nickname}");
-      } else {
-        Get.snackbar(
-            "Error", "Top-up failed due to limits or balance constraints.");
-      }
-    } catch (e) {
-      Get.snackbar("Error", e.toString());
-    }
   }
 
   List<TopUpOption> getTopUpOptions() {
@@ -139,7 +115,7 @@ class TopUpController extends GetxController {
 
     Get.snackbar(
       'Success',
-      'Top-up of AED $amount successful for ${beneficiary.nickname}',
+      'Top-up of AED $amount successful for ${beneficiary.nickname} and total paid amount is $totalAmount',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.green,
     );
