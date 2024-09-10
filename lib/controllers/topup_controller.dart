@@ -63,7 +63,7 @@ class TopUpController extends GetxController {
     return getTopUpOptions();
   }
 
-  bool topUp(Beneficiary beneficiary, int amount) {
+  Future<bool> topUp(Beneficiary beneficiary, int amount) async {
     final user = userController.currentUser.value;
     if (user == null) {
       Get.snackbar('Error', 'User not logged in');
@@ -144,7 +144,7 @@ class TopUpController extends GetxController {
     await prefs.setStringList(historyKey, history);
   }
 
-  void onSubmit(Beneficiary beneficiary) {
+  void onSubmit(Beneficiary beneficiary) async {
     final amount = int.tryParse(amountController.text) ?? 0;
 
     bool isVerified = false;
@@ -165,7 +165,7 @@ class TopUpController extends GetxController {
       return;
     }
 
-    if (topUp(beneficiary, amount)) {
+    if (await topUp(beneficiary, amount)) {
       Get.snackbar('Success', 'Top Up Successful');
       saveTopUpHistory(beneficiary, amount);
     } else {

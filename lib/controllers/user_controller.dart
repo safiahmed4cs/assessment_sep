@@ -14,6 +14,11 @@ class UserController extends GetxController {
     _checkCurrentUser();
   }
 
+  void updateUserData(User updatedUser) {
+    Future.delayed(const Duration(seconds: 1));
+    currentUser.value = updatedUser;
+  }
+
   Future<void> _checkCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userJson = prefs.getString('current_user');

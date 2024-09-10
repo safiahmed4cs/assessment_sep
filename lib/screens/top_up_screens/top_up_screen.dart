@@ -90,10 +90,11 @@ class TopUpScreen extends StatelessWidget {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
-                  topUpController.topUp(
+                  bool res = await topUpController.topUp(
                     beneficiary,
                     topUpController.selectedAmount.value,
                   );
+                  if (res) Get.back();
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48),

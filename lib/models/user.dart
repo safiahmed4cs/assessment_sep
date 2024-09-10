@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:assessment_sep_2024/controllers/user_controller.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class User {
@@ -67,11 +69,17 @@ class User {
 
     // Save the user data to the shared preferences
     await saveUserData();
+
+    // Update the user data in UserController
+    final userController = Get.find<UserController>();
+    userController.updateUserData(this);
   }
 
   Future<void> saveUserData() async {
     final prefs = await SharedPreferences.getInstance();
     final userData = jsonEncode(toJson());
     await prefs.setString('current_user', userData);
+
+    //update the user data in usercontroller
   }
 }
