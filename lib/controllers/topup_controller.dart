@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/models/beneficiary.dart';
+import 'package:assessment_sep_2024/models/history.dart';
 import 'package:assessment_sep_2024/models/top_up_option.dart';
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // controllers/topup_controller.dart
 class TopUpController extends GetxController {
   var beneficiaries = <Beneficiary>[].obs;
+  final RxList<History> allHistory = <History>[].obs;
 
   final UserController userController = Get.find<UserController>();
 
@@ -41,17 +43,6 @@ class TopUpController extends GetxController {
     loadTopupHistory();
   }
 
-  //Load benificiaries from shared preferences and add to the list where user id is currentuser userid
-  Future<void> loadTopupHistory() async {
-    final currentUserId = userController.currentUser.value?.userId;
-    if (currentUserId == null) {
-      return;
-    }
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final history = prefs.getStringList(historyKey) ?? [];
-    print(history);
-  }
-
   bool canTopUpBeneficiary(double amount, Beneficiary beneficiary) {
     if (user == null) {
       return false;
@@ -64,7 +55,7 @@ class TopUpController extends GetxController {
   }
 
   Future<bool> topUp(Beneficiary beneficiary, int amount) async {
-    final user = userController.currentUser.value;
+    User? user = await userController.getCurrentUser();
     if (user == null) {
       Get.snackbar('Error', 'User not logged in');
       return false;
@@ -111,37 +102,35 @@ class TopUpController extends GetxController {
     user.topUp(paidAmount, selectedMonth);
 
     // Save the top-up history
-    saveTopUpHistory(beneficiary, amount);
+    await saveTopupHistory(beneficiary, amount);
 
-    Get.snackbar(
-      'Success',
-      'Top-up of AED $amount successful for ${beneficiary.nickname} and total paid amount is $totalAmount',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-    );
     return true;
   }
 
-  void saveTopUpHistory(Beneficiary beneficiary, int amount) async {
+  // Method to load beneficiary list from SharedPreferences
+  Future<void> loadTopupHistory() async {
     final prefs = await SharedPreferences.getInstance();
-    final user = userController.currentUser.value;
+    final beneficiaryListJson = prefs.getStringList('history') ?? [];
+    allHistory.value = beneficiaryListJson
+        .map((h) => History.fromJson(jsonDecode(h)))
+        .toList();
+  }
 
-    if (user == null) {
-      Get.snackbar('Error', 'User not logged in');
-      return;
-    }
-
-    final history = prefs.getStringList(historyKey) ?? [];
-
-    final newRecord = jsonEncode({
-      'userId': user.userId,
-      'beneficiaryId': beneficiary.beneficiaryId,
-      'amount': amount,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
-
-    history.add(newRecord);
-    await prefs.setStringList(historyKey, history);
+  // Method to save beneficiary list to SharedPreferences
+  Future<void> saveTopupHistory(Beneficiary beneficiary, amount) async {
+    final newHisotry = History(
+      beneficiaryId: beneficiary.beneficiaryId,
+      userId: beneficiary.userId,
+      fullName: beneficiary.fullname,
+      nickname: beneficiary.nickname,
+      amount: amount.toString(),
+      date: DateTime.now().toString(),
+      phoneNumber: beneficiary.phoneNumber,
+    );
+    allHistory.add(newHisotry);
+    final prefs = await SharedPreferences.getInstance();
+    final historyJson = allHistory.map((h) => jsonEncode(h.toJson())).toList();
+    await prefs.setStringList('history', historyJson);
   }
 
   void onSubmit(Beneficiary beneficiary) async {
@@ -167,7 +156,7 @@ class TopUpController extends GetxController {
 
     if (await topUp(beneficiary, amount)) {
       Get.snackbar('Success', 'Top Up Successful');
-      saveTopUpHistory(beneficiary, amount);
+      saveTopupHistory(beneficiary, amount);
     } else {
       Get.snackbar('Error', 'Top Up Failed');
     }

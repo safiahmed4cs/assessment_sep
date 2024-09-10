@@ -94,7 +94,24 @@ class TopUpScreen extends StatelessWidget {
                     beneficiary,
                     topUpController.selectedAmount.value,
                   );
-                  if (res) Get.back();
+
+                  if (res) {
+                    Get.snackbar(
+                      'Success',
+                      'Top-up of AED ${topUpController.selectedAmount.value} successful for ${beneficiary.nickname} and total paid amount is ${topUpController.selectedAmount.value + topUpController.charge}',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.green,
+                    );
+                    Future.delayed(const Duration(seconds: 2), () {
+                      Navigator.of(context).pop();
+                    });
+                    //   Get.snackbar(
+                    //     'Success',
+                    //     'Top up successful',
+                    //     snackPosition: SnackPosition.BOTTOM,
+                    //     backgroundColor: Colors.green,
+                    //   );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48),
