@@ -67,10 +67,7 @@ class TopUpController extends GetxController {
       user!.canTopUp(amount, month);
       if (canTopUpBeneficiary(amount, beneficiary)) {
         // Deduct the amount + transaction fee from user's balance
-        userController.currentUser.update((u) {
-          // u!.balance -= (amount + 1); // AED 1 transaction fee
-          // u.totalMonthlyTopUp += amount;
-        });
+        userController.currentUser.update((u) {});
 
         // Update beneficiary's top-up amount
         beneficiary.monthlyTopUpAmount += amount;
