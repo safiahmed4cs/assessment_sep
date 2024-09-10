@@ -6,8 +6,18 @@ import 'package:get/get.dart';
 
 class TopUpController extends GetxController {
   final topUpOptions = [5, 10, 20, 30, 50, 75, 100];
+
+  final RxInt selectedAmount = 0.obs;
+  final int charge = 1;
+
   final totalTopUpThisMonth = 0.obs;
   final amountController = TextEditingController();
+
+  void selectAmount(int amount) {
+    selectedAmount.value = amount;
+  }
+
+  int get totalAmount => selectedAmount.value + charge;
 
   bool topUp(Beneficiary beneficiary, int amount) {
     // Deduct the amount from the wallet balance
