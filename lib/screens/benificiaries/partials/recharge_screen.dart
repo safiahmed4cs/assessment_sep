@@ -1,5 +1,5 @@
 import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
-import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/beneficiary.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/benificiary_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -65,7 +65,7 @@ class RechargeScreen extends StatelessWidget {
                             onPressed: () {
                               beneficiaryController.deleteBeneficiary(
                                 context,
-                                beneficiary,
+                                beneficiary.beneficiaryId,
                               );
                             },
                           ),

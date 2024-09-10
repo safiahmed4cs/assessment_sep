@@ -1,14 +1,22 @@
+import 'dart:convert';
+
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
-import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/beneficiary.dart';
+import 'package:assessment_sep_2024/models/history.dart';
 import 'package:assessment_sep_2024/models/top_up_option.dart';
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // controllers/topup_controller.dart
 class TopUpController extends GetxController {
   var beneficiaries = <Beneficiary>[].obs;
+  final RxList<History> allHistory = <History>[].obs;
+
   final UserController userController = Get.find<UserController>();
+
+  final historyKey = 'topup_history';
 
   final topUpOptions = [5, 10, 20, 30, 50, 75, 100];
 
@@ -16,6 +24,7 @@ class TopUpController extends GetxController {
   final int charge = 1;
 
   final totalTopUpThisMonth = 0.obs;
+  final selectedMonth = DateTime.now().month.toString();
   final amountController = TextEditingController();
 
   void selectAmount(int amount) {
@@ -31,8 +40,10 @@ class TopUpController extends GetxController {
     super.onInit();
     selectedAmount.value = 0;
     amountController.clear();
+    loadTopupHistory();
   }
 
+  // this is to check if the user can top up the beneficiary
   bool canTopUpBeneficiary(double amount, Beneficiary beneficiary) {
     if (user == null) {
       return false;
@@ -40,57 +51,92 @@ class TopUpController extends GetxController {
     return beneficiary.canTopUp(amount, user!.isVerified);
   }
 
-  bool canUserTopUp(double amount) {
-    if (user == null) {
-      return false;
-    }
-    return user!.canTopUp(amount);
-  }
-
-  void topUpBeneficiary(Beneficiary beneficiary, double amount) {
-    if (user == null) {
-      Get.snackbar("Error", "User not found.");
-      return;
-    }
-    if (canTopUpBeneficiary(amount, beneficiary) && canUserTopUp(amount)) {
-      // Deduct the amount + transaction fee from user's balance
-      userController.currentUser.update((u) {
-        u!.balance -= (amount + 1); // AED 1 transaction fee
-        u.totalMonthlyTopUp += amount;
-      });
-
-      // Update beneficiary's top-up amount
-      beneficiary.monthlyTopUpAmount += amount;
-
-      Get.snackbar("Success",
-          "Top-up of AED $amount successful for ${beneficiary.nickname}");
-    } else {
-      Get.snackbar(
-          "Error", "Top-up failed due to limits or balance constraints.");
-    }
-  }
-
+  // this is to get the top up options
   List<TopUpOption> getTopUpOptions() {
     return getTopUpOptions();
   }
 
-  bool topUp(Beneficiary beneficiary, int amount) {
-    // Deduct the amount from the wallet balance
-    if (beneficiary.monthlyTopUpAmount >= amount) {
-      beneficiary.monthlyTopUpAmount -= amount;
-      totalTopUpThisMonth.value += amount;
-      return true;
+  // this is to top up the beneficiary
+  Future<bool> topUp(Beneficiary beneficiary, int amount) async {
+    User? user = await userController.getCurrentUser();
+    if (user == null) {
+      Get.snackbar('Error', 'User not logged in');
+      return false;
     }
-    Get.snackbar('Error', 'Insufficient balance');
-    return false;
-  }
 
-  void saveTopUpHistory(Beneficiary beneficiary, int amount) {
+    double paidAmount = amount + 1;
+
+    // Check if the user has enough balance
+    final double remainingBalance = user.getBalanceAmountInMonth(selectedMonth);
+    if (remainingBalance < amount) {
+      Get.snackbar(
+        'Error',
+        'Insufficient balance',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+      );
+      return false;
+    }
+
+    final int monthlyLimitPerBeneficiary = user.isVerified ? 500 : 1000;
+
+    // Check if the top-up amount exceeds the monthly limit for the beneficiary
+    if (beneficiary.monthlyTopUpAmount + amount > monthlyLimitPerBeneficiary) {
+      Get.snackbar(
+        'Error',
+        'Monthly top-up limit exceeded for this beneficiary',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+      );
+      return false;
+    }
+
+    // Check if the user has enough balance including the charge
+    // final int totalAmount = amount + charge;
+    if (remainingBalance < amount) {
+      Get.snackbar('Error', 'Insufficient balance');
+      return false;
+    }
+
+    // Deduct the amount from the beneficiary's monthly top-up amount
+    beneficiary.monthlyTopUpAmount += amount;
+    totalTopUpThisMonth.value += amount;
+
+    user.topUp(paidAmount, selectedMonth);
+
     // Save the top-up history
-    // This could involve saving to a database or shared preferences
+    await saveTopupHistory(beneficiary, amount);
+
+    return true;
   }
 
-  void onSubmit(Beneficiary beneficiary) {
+  // Method to load beneficiary list from SharedPreferences
+  Future<void> loadTopupHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final beneficiaryListJson = prefs.getStringList('history') ?? [];
+    allHistory.value = beneficiaryListJson
+        .map((h) => History.fromJson(jsonDecode(h)))
+        .toList();
+  }
+
+  // Method to save beneficiary list to SharedPreferences
+  Future<void> saveTopupHistory(Beneficiary beneficiary, amount) async {
+    final newHisotry = History(
+      beneficiaryId: beneficiary.beneficiaryId,
+      userId: beneficiary.userId,
+      fullName: beneficiary.fullname,
+      nickname: beneficiary.nickname,
+      amount: amount.toString(),
+      date: DateTime.now().toString(),
+      phoneNumber: beneficiary.phoneNumber,
+    );
+    allHistory.add(newHisotry);
+    final prefs = await SharedPreferences.getInstance();
+    final historyJson = allHistory.map((h) => jsonEncode(h.toJson())).toList();
+    await prefs.setStringList('history', historyJson);
+  }
+
+  void onSubmit(Beneficiary beneficiary) async {
     final amount = int.tryParse(amountController.text) ?? 0;
 
     bool isVerified = false;
@@ -111,9 +157,9 @@ class TopUpController extends GetxController {
       return;
     }
 
-    if (topUp(beneficiary, amount)) {
+    if (await topUp(beneficiary, amount)) {
       Get.snackbar('Success', 'Top Up Successful');
-      saveTopUpHistory(beneficiary, amount);
+      saveTopupHistory(beneficiary, amount);
     } else {
       Get.snackbar('Error', 'Top Up Failed');
     }

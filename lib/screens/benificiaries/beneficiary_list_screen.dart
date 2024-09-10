@@ -1,5 +1,6 @@
 import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
+import 'package:assessment_sep_2024/models/user.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/beneficiary_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,9 @@ class BeneficiaryListScreen extends StatelessWidget {
   final UserController userController = Get.find<UserController>();
   final BeneficiaryController beneficiaryController =
       Get.find<BeneficiaryController>();
+
+  User? get user => userController.currentUser.value;
+  String get month => DateTime.now().month.toString();
 
   BeneficiaryListScreen({super.key});
 
@@ -41,14 +45,11 @@ class BeneficiaryListScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Obx(() {
-                  final user = userController.currentUser.value;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user != null
-                            ? 'Welcome, ${user.fullName}'
-                            : 'Mobile Recharge',
+                        'Welcome, ${user?.fullName}',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -80,35 +81,37 @@ class BeneficiaryListScreen extends StatelessWidget {
             ),
           ),
           // Segment Screens
-          SizedBox(
-            height: 200,
-            child: Obx(() {
-              return segmentController.selectedSegment.value == 0
-                  ? RechargeScreen(beneficiaryController: beneficiaryController)
-                  : const HistoryScreen();
-            }),
-          ),
-          // Beneficiary List
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height - 200,
-              ),
-            ),
-          ),
+          Obx(() {
+            if (segmentController.selectedSegment.value == 0) {
+              return SizedBox(
+                height: 200,
+                child: RechargeScreen(
+                  beneficiaryController: beneficiaryController,
+                ),
+              );
+            } else {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height - 250,
+                child: HistoryScreen(),
+              );
+            }
+          }),
         ],
       ),
     );
   }
 
   Widget _buildUserBalanceSection() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        'User Balance: AED ${userController.currentUser.value?.balance ?? 0}',
-      ),
-    );
+    return Obx(() {
+      User? user = userController.currentUser.value;
+      if (user == null) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'User Balance: AED ${user.getBalanceAmountInMonth(month)}',
+        ),
+      );
+    });
   }
 
   void _showAddBeneficiaryForm(BuildContext context) {

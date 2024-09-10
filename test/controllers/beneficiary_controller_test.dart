@@ -1,5 +1,4 @@
 import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
-import 'package:assessment_sep_2024/models/benificiary.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

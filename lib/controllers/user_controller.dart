@@ -14,6 +14,13 @@ class UserController extends GetxController {
     _checkCurrentUser();
   }
 
+  // this is to update the user data
+  void updateUserData(User updatedUser) {
+    Future.delayed(const Duration(seconds: 1));
+    currentUser.value = updatedUser;
+  }
+
+  // this is to check if the user is already logged in
   Future<void> _checkCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userJson = prefs.getString('current_user');
@@ -23,6 +30,17 @@ class UserController extends GetxController {
     }
   }
 
+  // this is to get the current user
+  Future<User?> getCurrentUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('current_user');
+    if (userJson != null) {
+      return User.fromJson(jsonDecode(userJson));
+    }
+    return null;
+  }
+
+  // this is to save the user data
   Future<void> saveUser(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('current_user', jsonEncode(user.toJson()));
@@ -30,13 +48,15 @@ class UserController extends GetxController {
     Get.offAll(() => BeneficiaryListScreen());
   }
 
+  // this is to logout the user
   void logout() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.remove('current_user');
-    // currentUser.value = null;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('current_user');
+    currentUser.value = null;
     Get.offAll(() => HomeScreen());
   }
 
+  // this is to clear the session
   void clearSession() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();

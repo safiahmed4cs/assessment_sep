@@ -1,5 +1,5 @@
 import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
-import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/beneficiary.dart';
 import 'package:assessment_sep_2024/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,8 +48,12 @@ class BeneficiaryDetails extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              onPressed: () {
-                beneficiaryController.deleteBeneficiary(context, beneficiary);
+              onPressed: () async {
+                await beneficiaryController.deleteBeneficiary(
+                  context,
+                  beneficiary.beneficiaryId,
+                );
+                Navigator.of(context).pop();
               },
               child: const Text('Delete'),
             ),

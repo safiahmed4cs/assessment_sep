@@ -50,8 +50,8 @@ class HomeScreen extends StatelessWidget {
                       fullName: 'John Doe(Verified)',
                       mobile: '+971552385432',
                       isVerified: true,
-                      balance: 3000,
                       totalMonthlyTopUp: 500,
+                      monthlyWallets: {},
                     );
                     userController.saveUser(user);
                   },
@@ -73,8 +73,8 @@ class HomeScreen extends StatelessWidget {
                       fullName: 'John Doe(Unverified)',
                       mobile: '+971552385432',
                       isVerified: true,
-                      balance: 3000,
                       totalMonthlyTopUp: 1000,
+                      monthlyWallets: {},
                     );
                     userController.saveUser(user);
                   },

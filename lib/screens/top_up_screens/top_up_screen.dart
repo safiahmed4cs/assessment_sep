@@ -1,5 +1,5 @@
 import 'package:assessment_sep_2024/controllers/topup_controller.dart';
-import 'package:assessment_sep_2024/models/benificiary.dart';
+import 'package:assessment_sep_2024/models/beneficiary.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -89,16 +89,28 @@ class TopUpScreen extends StatelessWidget {
               ],
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  if (topUpController.topUp(
-                      beneficiary, topUpController.selectedAmount.value)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Top Up Successful')),
+                onPressed: () async {
+                  bool res = await topUpController.topUp(
+                    beneficiary,
+                    topUpController.selectedAmount.value,
+                  );
+
+                  if (res) {
+                    Get.snackbar(
+                      'Success',
+                      'Top-up of AED ${topUpController.selectedAmount.value} successful for ${beneficiary.nickname} and total paid amount is ${topUpController.selectedAmount.value + topUpController.charge}',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.green,
                     );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Top Up Failed')),
-                    );
+                    Future.delayed(const Duration(seconds: 2), () {
+                      Navigator.of(context).pop();
+                    });
+                    //   Get.snackbar(
+                    //     'Success',
+                    //     'Top up successful',
+                    //     snackPosition: SnackPosition.BOTTOM,
+                    //     backgroundColor: Colors.green,
+                    //   );
                   }
                 },
                 style: ElevatedButton.styleFrom(
