@@ -27,7 +27,7 @@ class RechargeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final beneficiary = beneficiaryService.beneficiaries[index];
           return Container(
-            width: MediaQuery.of(context).size.width * 0.42,
+            width: MediaQuery.of(context).size.width * 0.44,
             margin: EdgeInsets.only(
               left: index == 0 ? 8 : 4,
               right: index == totalCount - 1 ? 8 : 4,
