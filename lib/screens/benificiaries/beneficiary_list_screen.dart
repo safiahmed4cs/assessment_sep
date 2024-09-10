@@ -1,3 +1,4 @@
+import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/beneficiary_form.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/benificiary_service.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:assessment_sep_2024/widgets/segment_button.dart';
 class BeneficiaryListScreen extends StatelessWidget {
   final SegmentController segmentController = Get.put(SegmentController());
   final BeneficiaryService beneficiaryService = Get.put(BeneficiaryService());
+  final UserController userController = Get.find<UserController>();
 
   BeneficiaryListScreen({super.key});
 
@@ -20,7 +22,7 @@ class BeneficiaryListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mobile Recharge'),
+        title: const Text("Mobile Recharge"),
         centerTitle: false,
         actions: [
           IconButton(
@@ -30,7 +32,36 @@ class BeneficiaryListScreen extends StatelessWidget {
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Obx(() {
+                  final user = userController.currentUser.value;
+                  return Text(
+                    user != null
+                        ? 'Welcome, ${user.fullName}'
+                        : 'Mobile Recharge',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }),
+
+                // User Logout
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    userController.logout();
+                  },
+                ),
+              ],
+            ),
+          ),
           // Segment Control
           Padding(
             padding: const EdgeInsets.all(8.0),

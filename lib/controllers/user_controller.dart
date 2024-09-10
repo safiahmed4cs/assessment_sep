@@ -1,5 +1,6 @@
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/beneficiary_list_screen.dart';
+import 'package:assessment_sep_2024/screens/home_screen.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -27,5 +28,12 @@ class UserController extends GetxController {
     await prefs.setString('current_user', jsonEncode(user.toJson()));
     currentUser.value = user;
     Get.offAll(() => BeneficiaryListScreen());
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('current_user');
+    currentUser.value = null;
+    Get.offAll(() => HomeScreen());
   }
 }
