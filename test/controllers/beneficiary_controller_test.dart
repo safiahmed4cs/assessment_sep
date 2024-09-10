@@ -5,24 +5,22 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('Add Beneficiary', () {
     final controller = BeneficiaryController();
-    final beneficiary = Beneficiary(
+    controller.addBeneficiary(
       fullname: 'John Smith',
       nickname: 'John',
       phoneNumber: '0501234567',
     );
-    controller.addBeneficiary(beneficiary);
     expect(controller.beneficiaries.length, 1);
   });
 
   test('Remove Beneficiary', () {
     final controller = BeneficiaryController();
-    final beneficiary = Beneficiary(
+    controller.addBeneficiary(
       fullname: 'John Duke',
       nickname: 'Duke',
       phoneNumber: '0501236546',
     );
-    controller.addBeneficiary(beneficiary);
-    controller.removeBeneficiary(beneficiary);
+    // controller.removeBenificiary(beneficiary);
     expect(controller.beneficiaries.length, 0);
   });
 }

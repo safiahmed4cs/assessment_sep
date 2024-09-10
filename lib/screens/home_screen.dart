@@ -9,6 +9,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // userController.clearSession();
     return Scaffold(
       body: Center(
         child: SizedBox(
@@ -41,6 +42,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     User user = User(
+                      userId: '1',
                       fullName: 'John Doe(Verified)',
                       mobile: '+971552385432',
                       isVerified: true,
@@ -61,6 +63,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     User user = User(
+                      userId: '2',
                       fullName: 'John Doe(Unverified)',
                       mobile: '+971552385432',
                       isVerified: true,

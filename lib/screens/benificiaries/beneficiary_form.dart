@@ -1,5 +1,4 @@
 import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
-import 'package:assessment_sep_2024/screens/benificiaries/benificiary_service.dart';
 import 'package:assessment_sep_2024/utils/capitalize_words_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,8 +16,6 @@ class BeneficiaryForm extends StatelessWidget {
 
   final BeneficiaryController beneficiaryController =
       Get.put(BeneficiaryController());
-
-  final BeneficiaryService beneficiaryService = Get.put(BeneficiaryService());
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +68,7 @@ class BeneficiaryForm extends StatelessWidget {
                   final nickname = beneficiaryController.nickname.value;
                   final phoneNumber = beneficiaryController.phoneNumber.value;
                   if (fullname != "" && phoneNumber != "") {
-                    await beneficiaryService.addBeneficiary(
+                    await beneficiaryController.addBeneficiary(
                       fullname: fullname,
                       phoneNumber: phoneNumber,
                       nickname: nickname,

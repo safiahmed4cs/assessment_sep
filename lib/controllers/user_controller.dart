@@ -8,13 +8,7 @@ import 'dart:convert';
 class UserController extends GetxController {
   var currentUser = Rxn<User>();
 
-  @override
-  void onInit() {
-    super.onInit();
-    _checkCurrentUser();
-  }
-
-  Future<void> _checkCurrentUser() async {
+  Future<void> checkCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userJson = prefs.getString('current_user');
     if (userJson != null) {
@@ -31,9 +25,14 @@ class UserController extends GetxController {
   }
 
   void logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('current_user');
-    currentUser.value = null;
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await prefs.remove('current_user');
+    // currentUser.value = null;
     Get.offAll(() => HomeScreen());
+  }
+
+  void clearSession() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 }

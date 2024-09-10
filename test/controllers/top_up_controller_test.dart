@@ -6,6 +6,7 @@ void main() {
   test('Top Up Beneficiary', () {
     final controller = TopUpController();
     final beneficiary = Beneficiary(
+      userId: '1',
       fullname: 'John Smith',
       nickname: 'John',
       phoneNumber: '0501234567',
@@ -19,6 +20,7 @@ void main() {
   test('Top Up Exceeds Limit', () {
     final controller = TopUpController();
     final beneficiary = Beneficiary(
+      userId: '2',
       fullname: 'John Duke',
       nickname: 'Duke',
       phoneNumber: '0543467234',

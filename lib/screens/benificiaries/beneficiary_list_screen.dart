@@ -1,6 +1,6 @@
+import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/beneficiary_form.dart';
-import 'package:assessment_sep_2024/screens/benificiaries/benificiary_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:assessment_sep_2024/controllers/segment_controller.dart';
@@ -10,7 +10,8 @@ import 'package:assessment_sep_2024/widgets/segment_button.dart';
 
 class BeneficiaryListScreen extends StatelessWidget {
   final SegmentController segmentController = Get.put(SegmentController());
-  final BeneficiaryService beneficiaryService = Get.put(BeneficiaryService());
+  final BeneficiaryController beneficiaryController =
+      Get.put(BeneficiaryController());
   final UserController userController = Get.find<UserController>();
 
   BeneficiaryListScreen({super.key});
@@ -18,7 +19,7 @@ class BeneficiaryListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Load beneficiaries from SharedPreferences
-    beneficiaryService.loadBeneficiaries();
+    beneficiaryController.loadBeneficiaries();
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +78,7 @@ class BeneficiaryListScreen extends StatelessWidget {
             height: 200,
             child: Obx(() {
               return segmentController.selectedSegment.value == 0
-                  ? RechargeScreen(beneficiaryService: beneficiaryService)
+                  ? RechargeScreen(beneficiaryController: beneficiaryController)
                   : const HistoryScreen();
             }),
           ),
@@ -95,7 +96,7 @@ class BeneficiaryListScreen extends StatelessWidget {
   void _showAddBeneficiaryForm(BuildContext context) {
     final formKey = GlobalKey<FormState>();
 
-    if (beneficiaryService.beneficiaries.length >= 5) {
+    if (beneficiaryController.beneficiaries.length >= 5) {
       Get.snackbar(
         'Error',
         'You can only add up to 5 beneficiaries.',
@@ -128,7 +129,7 @@ class BeneficiaryListScreen extends StatelessWidget {
                     BeneficiaryForm(
                       formKey: formKey,
                       onSave: (fullname, phoneNumber, nickname) async {
-                        await beneficiaryService.addBeneficiary(
+                        await beneficiaryController.addBeneficiary(
                           fullname: fullname,
                           nickname: nickname,
                           phoneNumber: phoneNumber,

@@ -1,12 +1,13 @@
+import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
 import 'package:assessment_sep_2024/models/benificiary.dart';
-import 'package:assessment_sep_2024/screens/benificiaries/benificiary_service.dart';
 import 'package:assessment_sep_2024/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class BeneficiaryDetails extends StatelessWidget {
   final Beneficiary beneficiary;
-  final BeneficiaryService beneficiaryService = Get.put(BeneficiaryService());
+  final BeneficiaryController beneficiaryController =
+      Get.put(BeneficiaryController());
 
   BeneficiaryDetails({super.key, required this.beneficiary});
 
@@ -48,7 +49,7 @@ class BeneficiaryDetails extends StatelessWidget {
                 backgroundColor: Colors.red,
               ),
               onPressed: () {
-                beneficiaryService.deleteBeneficiary(context, beneficiary);
+                beneficiaryController.deleteBeneficiary(context, beneficiary);
               },
               child: const Text('Delete'),
             ),
