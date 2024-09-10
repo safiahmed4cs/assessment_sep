@@ -3,8 +3,8 @@ import 'package:assessment_sep_2024/screens/benificiaries/benificiary_service.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:assessment_sep_2024/controllers/segment_controller.dart';
-import 'package:assessment_sep_2024/screens/recharge_screen.dart';
-import 'package:assessment_sep_2024/screens/history_screen.dart';
+import 'package:assessment_sep_2024/screens/benificiaries/partials/recharge_screen.dart';
+import 'package:assessment_sep_2024/screens/benificiaries/partials/history_screen.dart';
 import 'package:assessment_sep_2024/widgets/segment_button.dart';
 
 class BeneficiaryListScreen extends StatelessWidget {
