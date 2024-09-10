@@ -1,18 +1,22 @@
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 class User {
-  final String userId;
-  final String fullName;
-  final String mobile;
-  final bool isVerified;
-  double balance;
+  String userId;
+  String fullName;
+  String mobile;
+  bool isVerified;
   double totalMonthlyTopUp;
+  Map<String, double> monthlyWallets;
 
   User({
     required this.userId,
-    required this.isVerified,
     required this.fullName,
     required this.mobile,
-    required this.balance,
+    required this.isVerified,
     required this.totalMonthlyTopUp,
+    required this.monthlyWallets,
   });
 
   Map<String, dynamic> toJson() => {
@@ -20,8 +24,8 @@ class User {
         'fullName': fullName,
         'mobile': mobile,
         'isVerified': isVerified,
-        'balance': balance,
         'totalMonthlyTopUp': totalMonthlyTopUp,
+        'monthlyWallets': monthlyWallets,
       };
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -30,12 +34,44 @@ class User {
       fullName: json['fullName'],
       mobile: json['mobile'],
       isVerified: json['isVerified'],
-      balance: json['balance'],
       totalMonthlyTopUp: json['totalMonthlyTopUp'],
+      monthlyWallets: Map<String, double>.from(json['monthlyWallets']),
     );
   }
 
-  bool canTopUp(double amount) {
-    return (totalMonthlyTopUp + amount) <= 3000 && balance >= amount + 1;
+  double getTotalAmountUsedInMonth(String month) {
+    return monthlyWallets[month] ?? 0;
+  }
+
+  double getBalanceAmountInMonth(String month) {
+    return 3000 - getTotalAmountUsedInMonth(month);
+  }
+
+  bool canTopUp(double amount, String month) {
+    final totalUsedThisMonth = getTotalAmountUsedInMonth(month);
+    final remainingBalance = 3000 - totalUsedThisMonth;
+
+    return remainingBalance >= amount + 1;
+  }
+
+  Future<void> topUp(double amount, String month) async {
+    final totalUsedThisMonth = getTotalAmountUsedInMonth(month);
+    final remainingBalance = 3000 - totalUsedThisMonth;
+
+    if (remainingBalance < amount + 1) {
+      throw Exception('Insufficient monthly wallet balance');
+    }
+
+    totalMonthlyTopUp += amount;
+    monthlyWallets[month] = totalUsedThisMonth + amount;
+
+    // Save the user data to the shared preferences
+    await saveUserData();
+  }
+
+  Future<void> saveUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = jsonEncode(toJson());
+    await prefs.setString('current_user', userData);
   }
 }

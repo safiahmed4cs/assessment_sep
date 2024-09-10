@@ -89,17 +89,11 @@ class TopUpScreen extends StatelessWidget {
               ],
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  if (topUpController.topUp(
-                      beneficiary, topUpController.selectedAmount.value)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Top Up Successful')),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Top Up Failed')),
-                    );
-                  }
+                onPressed: () async {
+                  topUpController.topUp(
+                    beneficiary,
+                    topUpController.selectedAmount.value,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48),

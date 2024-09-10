@@ -1,5 +1,6 @@
 import 'package:assessment_sep_2024/controllers/benificiary_controller.dart';
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
+import 'package:assessment_sep_2024/models/user.dart';
 import 'package:assessment_sep_2024/screens/benificiaries/beneficiary_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,9 @@ class BeneficiaryListScreen extends StatelessWidget {
   final UserController userController = Get.find<UserController>();
   final BeneficiaryController beneficiaryController =
       Get.find<BeneficiaryController>();
+
+  User get user => userController.currentUser.value!;
+  String get month => DateTime.now().month.toString();
 
   BeneficiaryListScreen({super.key});
 
@@ -103,12 +107,15 @@ class BeneficiaryListScreen extends StatelessWidget {
   }
 
   Widget _buildUserBalanceSection() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        'User Balance: AED ${userController.currentUser.value?.balance ?? 0}',
-      ),
-    );
+    return Obx(() {
+      final user = userController.currentUser.value!;
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'User Balance: AED ${user.getBalanceAmountInMonth(month)}',
+        ),
+      );
+    });
   }
 
   void _showAddBeneficiaryForm(BuildContext context) {

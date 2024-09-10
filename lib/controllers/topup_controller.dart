@@ -15,12 +15,13 @@ class TopUpController extends GetxController {
 
   final historyKey = 'topup_history';
 
-  final topUpOptions = [5, 10, 20, 30, 50, 75, 100];
+  final topUpOptions = [5, 10, 20, 30, 50, 75, 100, 1000, 4000];
 
   final RxInt selectedAmount = 0.obs;
   final int charge = 1;
 
   final totalTopUpThisMonth = 0.obs;
+  final selectedMonth = DateTime.now().month.toString();
   final amountController = TextEditingController();
 
   void selectAmount(int amount) {
@@ -57,33 +58,31 @@ class TopUpController extends GetxController {
     return beneficiary.canTopUp(amount, user!.isVerified);
   }
 
-  bool canUserTopUp(double amount) {
-    if (user == null) {
-      return false;
-    }
-    return user!.canTopUp(amount);
-  }
+  void topUpBeneficiary(Beneficiary beneficiary, double amount, String month) {
+    try {
+      if (user == null) {
+        Get.snackbar("Error", "User not found.");
+        return;
+      }
+      user!.canTopUp(amount, month);
+      if (canTopUpBeneficiary(amount, beneficiary)) {
+        // Deduct the amount + transaction fee from user's balance
+        userController.currentUser.update((u) {
+          // u!.balance -= (amount + 1); // AED 1 transaction fee
+          // u.totalMonthlyTopUp += amount;
+        });
 
-  void topUpBeneficiary(Beneficiary beneficiary, double amount) {
-    if (user == null) {
-      Get.snackbar("Error", "User not found.");
-      return;
-    }
-    if (canTopUpBeneficiary(amount, beneficiary) && canUserTopUp(amount)) {
-      // Deduct the amount + transaction fee from user's balance
-      userController.currentUser.update((u) {
-        u!.balance -= (amount + 1); // AED 1 transaction fee
-        u.totalMonthlyTopUp += amount;
-      });
+        // Update beneficiary's top-up amount
+        beneficiary.monthlyTopUpAmount += amount;
 
-      // Update beneficiary's top-up amount
-      beneficiary.monthlyTopUpAmount += amount;
-
-      Get.snackbar("Success",
-          "Top-up of AED $amount successful for ${beneficiary.nickname}");
-    } else {
-      Get.snackbar(
-          "Error", "Top-up failed due to limits or balance constraints.");
+        Get.snackbar("Success",
+            "Top-up of AED $amount successful for ${beneficiary.nickname}");
+      } else {
+        Get.snackbar(
+            "Error", "Top-up failed due to limits or balance constraints.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
     }
   }
 
@@ -98,35 +97,45 @@ class TopUpController extends GetxController {
       return false;
     }
 
+    double paidAmount = amount + 1;
+
+    // Check if the user has enough balance
+    final double remainingBalance = user.getBalanceAmountInMonth(selectedMonth);
+    if (remainingBalance < amount) {
+      Get.snackbar(
+        'Error',
+        'Insufficient balance',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+      );
+      return false;
+    }
+
     final int monthlyLimitPerBeneficiary = user.isVerified ? 500 : 1000;
-    final int totalMonthlyLimit = 3000;
 
     // Check if the top-up amount exceeds the monthly limit for the beneficiary
     if (beneficiary.monthlyTopUpAmount + amount > monthlyLimitPerBeneficiary) {
       Get.snackbar(
-          'Error', 'Monthly top-up limit exceeded for this beneficiary');
-      return false;
-    }
-
-    // Check if the total top-up amount exceeds the total monthly limit for all beneficiaries
-    if (totalTopUpThisMonth.value + amount > totalMonthlyLimit) {
-      Get.snackbar('Error', 'Total monthly top-up limit exceeded');
+        'Error',
+        'Monthly top-up limit exceeded for this beneficiary',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+      );
       return false;
     }
 
     // Check if the user has enough balance including the charge
     final int totalAmount = amount + charge;
-    if (user.balance < totalAmount) {
+    if (remainingBalance < amount) {
       Get.snackbar('Error', 'Insufficient balance');
       return false;
     }
 
-    // Deduct the amount and charge from the user's balance
-    user.balance -= totalAmount;
-
     // Deduct the amount from the beneficiary's monthly top-up amount
     beneficiary.monthlyTopUpAmount += amount;
     totalTopUpThisMonth.value += amount;
+
+    user.topUp(paidAmount, selectedMonth);
 
     // Save the top-up history
     saveTopUpHistory(beneficiary, amount);
@@ -134,6 +143,8 @@ class TopUpController extends GetxController {
     Get.snackbar(
       'Success',
       'Top-up of AED $amount successful for ${beneficiary.nickname}',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
     );
     return true;
   }

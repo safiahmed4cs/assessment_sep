@@ -12,7 +12,7 @@ void main() {
       phoneNumber: '0501234567',
       benificiaryId: DateTime.now().toString(),
     );
-    final result = controller.topUp(beneficiary, 100);
+    final result = controller.topUp(beneficiary, 100, 'January');
     // expect(result, true);
     // expect(controller.userBalance.value, 4899);
     // expect(beneficiary.monthlyTopUp, 100);
@@ -27,7 +27,7 @@ void main() {
       phoneNumber: '0543467234',
       benificiaryId: DateTime.now().toString(),
     );
-    final result = controller.topUp(beneficiary, 1100);
+    final result = controller.topUp(beneficiary, 1100, 'March');
     expect(result, false);
   });
 }
