@@ -10,6 +10,7 @@ void main() {
       fullname: 'John Smith',
       nickname: 'John',
       phoneNumber: '0501234567',
+      benificiaryId: DateTime.now().toString(),
     );
     final result = controller.topUp(beneficiary, 100);
     // expect(result, true);
@@ -24,6 +25,7 @@ void main() {
       fullname: 'John Duke',
       nickname: 'Duke',
       phoneNumber: '0543467234',
+      benificiaryId: DateTime.now().toString(),
     );
     final result = controller.topUp(beneficiary, 1100);
     expect(result, false);

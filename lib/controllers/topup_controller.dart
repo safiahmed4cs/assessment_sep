@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:assessment_sep_2024/controllers/user_controller.dart';
 import 'package:assessment_sep_2024/models/benificiary.dart';
 import 'package:assessment_sep_2024/models/top_up_option.dart';
 import 'package:assessment_sep_2024/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // controllers/topup_controller.dart
 class TopUpController extends GetxController {
   var beneficiaries = <Beneficiary>[].obs;
   final UserController userController = Get.find<UserController>();
+
+  final historyKey = 'topup_history';
 
   final topUpOptions = [5, 10, 20, 30, 50, 75, 100];
 
@@ -31,6 +36,18 @@ class TopUpController extends GetxController {
     super.onInit();
     selectedAmount.value = 0;
     amountController.clear();
+    loadTopupHistory();
+  }
+
+  //Load benificiaries from shared preferences and add to the list where user id is currentuser userid
+  Future<void> loadTopupHistory() async {
+    final currentUserId = userController.currentUser.value?.userId;
+    if (currentUserId == null) {
+      return;
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final history = prefs.getStringList(historyKey) ?? [];
+    print(history);
   }
 
   bool canTopUpBeneficiary(double amount, Beneficiary beneficiary) {
@@ -75,19 +92,72 @@ class TopUpController extends GetxController {
   }
 
   bool topUp(Beneficiary beneficiary, int amount) {
-    // Deduct the amount from the wallet balance
-    if (beneficiary.monthlyTopUpAmount >= amount) {
-      beneficiary.monthlyTopUpAmount -= amount;
-      totalTopUpThisMonth.value += amount;
-      return true;
+    final user = userController.currentUser.value;
+    if (user == null) {
+      Get.snackbar('Error', 'User not logged in');
+      return false;
     }
-    Get.snackbar('Error', 'Insufficient balance');
-    return false;
+
+    final int monthlyLimitPerBeneficiary = user.isVerified ? 500 : 1000;
+    final int totalMonthlyLimit = 3000;
+
+    // Check if the top-up amount exceeds the monthly limit for the beneficiary
+    if (beneficiary.monthlyTopUpAmount + amount > monthlyLimitPerBeneficiary) {
+      Get.snackbar(
+          'Error', 'Monthly top-up limit exceeded for this beneficiary');
+      return false;
+    }
+
+    // Check if the total top-up amount exceeds the total monthly limit for all beneficiaries
+    if (totalTopUpThisMonth.value + amount > totalMonthlyLimit) {
+      Get.snackbar('Error', 'Total monthly top-up limit exceeded');
+      return false;
+    }
+
+    // Check if the user has enough balance including the charge
+    final int totalAmount = amount + charge;
+    if (user.balance < totalAmount) {
+      Get.snackbar('Error', 'Insufficient balance');
+      return false;
+    }
+
+    // Deduct the amount and charge from the user's balance
+    user.balance -= totalAmount;
+
+    // Deduct the amount from the beneficiary's monthly top-up amount
+    beneficiary.monthlyTopUpAmount += amount;
+    totalTopUpThisMonth.value += amount;
+
+    // Save the top-up history
+    saveTopUpHistory(beneficiary, amount);
+
+    Get.snackbar(
+      'Success',
+      'Top-up of AED $amount successful for ${beneficiary.nickname}',
+    );
+    return true;
   }
 
-  void saveTopUpHistory(Beneficiary beneficiary, int amount) {
-    // Save the top-up history
-    // This could involve saving to a database or shared preferences
+  void saveTopUpHistory(Beneficiary beneficiary, int amount) async {
+    final prefs = await SharedPreferences.getInstance();
+    final user = userController.currentUser.value;
+
+    if (user == null) {
+      Get.snackbar('Error', 'User not logged in');
+      return;
+    }
+
+    final history = prefs.getStringList(historyKey) ?? [];
+
+    final newRecord = jsonEncode({
+      'userId': user.userId,
+      'beneficiaryId': beneficiary.benificiaryId,
+      'amount': amount,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+
+    history.add(newRecord);
+    await prefs.setStringList(historyKey, history);
   }
 
   void onSubmit(Beneficiary beneficiary) {

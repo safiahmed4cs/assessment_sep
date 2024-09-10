@@ -1,4 +1,5 @@
 class Beneficiary {
+  String benificiaryId;
   String userId;
   String fullname;
   String nickname;
@@ -6,6 +7,7 @@ class Beneficiary {
   double monthlyTopUpAmount;
 
   Beneficiary({
+    required this.benificiaryId,
     required this.userId,
     required this.fullname,
     required this.nickname,

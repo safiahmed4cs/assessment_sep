@@ -126,6 +126,7 @@ class BeneficiaryController extends GetxController {
       fullname: fullname,
       nickname: nickname,
       phoneNumber: phoneNumber,
+      benificiaryId: DateTime.now().toString(),
     );
     beneficiaries.add(newBeneficiary);
     allBenificiaries.add(newBeneficiary);
